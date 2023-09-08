@@ -19,3 +19,8 @@
 
 # Go workspace file
 go.work
+
+# Certificates related files
+/*.pem
+/*.crt
+/*.key
