@@ -19,3 +19,12 @@ certs:
       organizationalUnit: Certificate Management
       locality: MI
       commonName: go-demo.localtest.me
+  go-demo-client.localtest.me:
+    serial: 1
+    validForYears: 1
+    subject:
+      country: IT
+      organization: Go Demo Org
+      organizationalUnit: Certificate Management
+      locality: MI
+      commonName: go-demo.localtest.me
