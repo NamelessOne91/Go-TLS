@@ -62,18 +62,35 @@ func CreateCert(cert *Cert, caKey []byte, caCert []byte, keyFilePath, certFilePa
 			PostalCode:         removeEmptyString([]string{cert.Subject.PostalCode}),
 			CommonName:         cert.Subject.CommonName,
 		},
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(cert.ValidForYears, 0, 0),
-		IsCA:                  true,
-		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:              x509.KeyUsageDigitalSignature,
-		BasicConstraintsValid: true,
+		NotBefore:   time.Now(),
+		NotAfter:    time.Now().AddDate(cert.ValidForYears, 0, 0),
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
+		KeyUsage:    x509.KeyUsageDigitalSignature,
+		DNSNames:    removeEmptyString(cert.DNSNames),
 	}
 
-	_, _, err := createCert(template, nil, nil)
+	caKeyParsed, err := key.PrivateKeyPemToRSA(caKey)
 	if err != nil {
 		return err
 	}
+
+	caCertParsed, err := PemToX509(caCert)
+	if err != nil {
+		return err
+	}
+
+	keyBytes, certBytes, err := createCert(template, caKeyParsed, caCertParsed)
+	if err != nil {
+		return err
+	}
+
+	if err := os.WriteFile(keyFilePath, keyBytes, 0600); err != nil {
+		return err
+	}
+	if err := os.WriteFile(certFilePath, certBytes, 0644); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -94,7 +111,10 @@ func createCert(template *x509.Certificate, caKey *rsa.PrivateKey, caCert *x509.
 			return nil, nil, err
 		}
 	} else {
-
+		derBytes, err = x509.CreateCertificate(rand.Reader, template, caCert, &pk.PublicKey, caKey)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	if err := pem.Encode(&certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes}); err != nil {
