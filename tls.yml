@@ -12,7 +12,7 @@ certs:
   go-demo.localtest.me:
     serial: 1
     validForYears: 1
-    dnsName: ["go-demo-2.localtest.me"]
+    dnsNames: ["go-demo-2.localtest.me"]
     subject:
       country: IT
       organization: Go Demo Org

@@ -12,6 +12,7 @@ type Cert struct {
 	Serial        *big.Int    `yaml:"serial"`
 	ValidForYears int         `yaml:"validForYears"`
 	Subject       CertSubject `yaml:"subject"`
+	DNSNames      []string    `yaml:"dnsNames"`
 }
 
 type CertSubject struct {
