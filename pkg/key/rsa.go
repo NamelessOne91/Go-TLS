@@ -15,7 +15,7 @@ func CreateRSAPrivateKey(n int) (*rsa.PrivateKey, error) {
 
 func RSAPrivateKeyToPem(privateKey *rsa.PrivateKey) *pem.Block {
 	return &pem.Block{
-		Type:  "RSA Private KEY",
+		Type:  "RSA PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
 	}
 }
@@ -47,7 +47,7 @@ func PrivateKeyPemToRSA(input []byte) (*rsa.PrivateKey, error) {
 
 	privPem, _ := pem.Decode(input)
 
-	if privPem.Type != "RSA Private KEY" {
+	if privPem.Type != "RSA PRIVATE KEY" {
 		return nil, fmt.Errorf("RSA private key is the wrong type: %s", privPem.Type)
 	}
 
